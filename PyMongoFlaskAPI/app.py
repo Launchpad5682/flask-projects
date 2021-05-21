@@ -1,25 +1,31 @@
+import json
 from flask import Flask, request, jsonify
 from flask_pymongo import PyMongo
 from json import dumps
 from bson.objectid import ObjectId
 from bson.json_util import dumps
 from pymongo.message import query
+from flask_cors import CORS
 
 app = Flask("to-do-api")
 app.config['MONGO_URI'] = 'mongodb://172.17.0.2:27017/to-do-app'
-
+# adding CORS compatibility for accessing the API over React
+CORS(app)
 # PyMongo connects the flask to the mongoDB
 database = PyMongo(app)
 collection = database.db.tasks
 
 # Schema includes the task and done bool to check for the task is done or not.
 
+
 @app.route('/add_task', methods=['POST'])
 def add_task():
     task_data = request.json
     print(task_data)
+    task = task_data['task']
+    done = task_data['done']
     # insert data
-    collection.insert_one(task_data).inserted_id
+    collection.insert_one({'task': task, "done": done}).inserted_id
     response = jsonify("Done")
     response.status_code = 201
     return response
@@ -27,17 +33,15 @@ def add_task():
 
 @app.route('/tasks', methods=['GET'])
 def show_tasks():
-    documents = collection.find()
-    response = jsonify(dumps(documents))
-    response.status_code = 200
+    documents = collection.find({})
+    response = dumps(documents)
     return response
 
 
 @app.route("/show_task/<id>", methods=['GET'])
 def show_task(id):
     document = collection.find_one({'_id': ObjectId(id)})
-    response = jsonify(dumps(document))
-    response.status_code = 200
+    response = dumps(document)
     return response
 
 
