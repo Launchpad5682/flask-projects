@@ -14,6 +14,7 @@
         "done": false
     }
     ```
+    It returns the ID of the document created.<br>
 * Show all the tasks <br>
   `http://localhost:5555/tasks` with `GET` request. <br>
 * Show the task <br>
