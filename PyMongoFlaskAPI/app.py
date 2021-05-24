@@ -25,8 +25,9 @@ def add_task():
     task = task_data['task']
     done = task_data['done']
     # insert data
-    collection.insert_one({'task': task, "done": done}).inserted_id
-    response = jsonify("Done")
+    record = collection.insert_one({'task': task, "done": done}).inserted_id
+    print(record)
+    response = jsonify(json.loads(dumps(record)))
     response.status_code = 201
     return response
 
